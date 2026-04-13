@@ -5,20 +5,20 @@ file(GLOB_RECURSE TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
 
-add_executable(template_tests)
+add_executable(cryptography_tests)
 
 target_sources(
-    template_tests
+    cryptography_tests
     PRIVATE
     ${TEST_SOURCES}
 )
 
 target_link_libraries(template_tests
-    PRIVATE template::library Catch2::Catch2WithMain
+    PRIVATE cryptography::library Catch2::Catch2WithMain
 )
 
-target_compile_features(template_tests PRIVATE cxx_std_20)
+target_compile_features(cryptography_tests PRIVATE cxx_std_20)
 
 include(Catch)
 
-catch_discover_tests(template_tests)
+catch_discover_tests(cryptography_tests)
