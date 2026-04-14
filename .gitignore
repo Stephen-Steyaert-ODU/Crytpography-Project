@@ -41,7 +41,7 @@
 *.dwo
 
 # Project executables (without extensions)
-# Place here
+cryptography/cryptography*
 
 # macOS
 .DS_Store
