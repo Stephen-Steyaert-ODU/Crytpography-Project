@@ -13,7 +13,7 @@ target_sources(
     ${TEST_SOURCES}
 )
 
-target_link_libraries(template_tests
+target_link_libraries(cryptography_tests
     PRIVATE cryptography::library Catch2::Catch2WithMain
 )
 
