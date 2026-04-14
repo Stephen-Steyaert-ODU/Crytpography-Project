@@ -1,8 +1,5 @@
+#include "common/common.hpp"
 #include "field/field_element.hpp"
-
-#include <iomanip>
-#include <sstream>
-#include <stdexcept>
 
 // ── prime ─────────────────────────────────────────────────────────────────────
 

@@ -1,9 +1,5 @@
 #pragma once
 
-#include <gmpxx.h>
-#include <string>
-#include <string_view>
-
 /**
  * @brief An element of GF(p) — the prime field underlying P-256.
  *
