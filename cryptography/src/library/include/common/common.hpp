@@ -4,6 +4,7 @@
 #include <array>
 #include <cstdint>
 #include <cstring>
+#include <fstream>
 #include <span>
 #include <stdexcept>
 #include <string>
