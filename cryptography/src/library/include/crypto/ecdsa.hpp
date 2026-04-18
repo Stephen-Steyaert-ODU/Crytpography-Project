@@ -21,7 +21,7 @@ struct Signature {
  * @return 32-byte digest.
  * @throws std::runtime_error on OpenSSL failure.
  */
-std::vector<uint8_t> sha256(std::span<const uint8_t> data);
+std::vector<uint8_t> sha256(const std::vector<uint8_t>& data);
 
 /**
  * @brief Signs a 32-byte message hash with @p priv.

@@ -6,7 +6,7 @@ namespace ECDSA {
 
 // ── SHA-256 ───────────────────────────────────────────────────────────────────
 
-std::vector<uint8_t> sha256(std::span<const uint8_t> data) {
+std::vector<uint8_t> sha256(const std::vector<uint8_t>& data) {
     std::vector<uint8_t> digest(32);
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
     if (!ctx) throw std::runtime_error("ECDSA::sha256: failed to create EVP_MD_CTX");
