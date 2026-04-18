@@ -19,6 +19,12 @@ RUN cmake -S . -B build -G Ninja \
 
 FROM ubuntu:24.04 AS test
 
+RUN apt update && apt install -y \
+    libcurl4 \
+    libgmp10 \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY --from=builder /app/build ./build
@@ -28,6 +34,11 @@ COPY --from=builder /usr/bin/ctest /usr/bin/ctest
 CMD ["ctest", "--test-dir", "build", "--output-on-failure"]
 
 FROM ubuntu:24.04 AS runtime
+
+RUN apt update && apt install -y \
+    libgmp10 \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
