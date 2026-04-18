@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <getopt.h>
+#include <iostream>
 #include <span>
 #include <stdexcept>
 #include <string>
