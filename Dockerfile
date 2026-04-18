@@ -21,9 +21,8 @@ FROM ubuntu:24.04 AS test
 
 RUN apt update && apt install -y \
     cmake \
-    libgmp10 \
-    libgmpxx4t64 \
-    libssl3 \
+    libgmp-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -36,9 +35,8 @@ CMD ["ctest", "--test-dir", "build", "--output-on-failure"]
 FROM ubuntu:24.04 AS runtime
 
 RUN apt update && apt install -y \
-    libgmp10 \
-    libgmpxx4t64 \
-    libssl3 \
+    libgmp-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
