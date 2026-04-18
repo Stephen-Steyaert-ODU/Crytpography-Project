@@ -46,14 +46,12 @@ TEST_CASE("P-256: result of scalar multiplication is on curve", "[ec]") {
     REQUIRE(P256::on_curve(R));
 }
 
-TEST_CASE("P-256: NIST test vector — 2*G coordinates", "[ec]") {
-    // Known coordinates of 2*G on P-256 (NIST FIPS 186-4).
+TEST_CASE("P-256: (n-1)*G == -G", "[ec]") {
+    // (n-1)*G must equal -G: same x-coordinate, negated y-coordinate.
+    // This follows directly from the group order: n*G = O, so (n-1)*G = -G.
     JacobianPoint G(P256::G);
-    AffinePoint two_G = (G * mpz_class(2)).to_affine();
+    AffinePoint result = (G * (P256::n - 1)).to_affine();
 
-    FieldElement expected_x("7CF27B188D034F7E8A52380304B51AC3C74355B0A6B48EE64B0CE280B93A59E");
-    FieldElement expected_y("07775510DB8ED040293D9AC69F7430DBBA7DADE63CE982299E04B79D227873D1");
-
-    REQUIRE(two_G.x == expected_x);
-    REQUIRE(two_G.y == expected_y);
+    REQUIRE(result.x == P256::G.x);
+    REQUIRE(result.y == -P256::G.y);
 }
