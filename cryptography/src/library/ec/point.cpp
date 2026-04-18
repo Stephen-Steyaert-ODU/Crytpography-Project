@@ -100,7 +100,7 @@ JacobianPoint JacobianPoint::operator+(const JacobianPoint& rhs) const {
     FieldElement S1   = Y     * rhs.Z * Z2Z2;
     FieldElement S2   = rhs.Y * Z     * Z1Z1;
     FieldElement H    = U2 - U1;
-    FieldElement R    = S2 - S1;
+    FieldElement R    = FieldElement(2L) * (S2 - S1);  // r = 2*(S2-S1) per add-2007-bl
 
     if (H.is_zero()) {
         // Same x-coordinate: either P = Q (double) or P = -Q (infinity).
