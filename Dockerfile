@@ -1,13 +1,12 @@
-FROM ubuntu:24.04 AS builder
+FROM alpine:3.23 AS builder
 
-RUN apt update && apt install -y \
+RUN apk add --no-cache \
     cmake \
-    ninja-build \
+    ninja \
     g++ \
     git \
-    libgmp-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+    gmp-dev \
+    openssl-dev
 
 WORKDIR /app
 
@@ -17,13 +16,12 @@ RUN cmake -S . -B build -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     && cmake --build build
 
-FROM ubuntu:24.04 AS test
+FROM alpine:3.23 AS test
 
-RUN apt update && apt install -y \
+RUN apk add --no-cache \
     cmake \
-    libgmp-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+    gmp-dev \
+    openssl-dev
 
 WORKDIR /app
 
@@ -32,12 +30,13 @@ COPY --from=builder /app/cryptography/cryptography_tests ./cryptography/cryptogr
 
 CMD ["ctest", "--test-dir", "build", "--output-on-failure"]
 
-FROM ubuntu:24.04 AS runtime
+FROM alpine:3.23 AS runtime
 
-RUN apt update && apt install -y \
-    libgmp-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    libstdc++ \
+    libgcc \
+    gmp-dev \
+    openssl
 
 WORKDIR /app
 

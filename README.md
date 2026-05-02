@@ -14,10 +14,7 @@ Implements ECIES (Elliptic Curve Integrated Encryption Scheme) and ECDSA from sc
 
 ## Running with Docker Compose (recommended)
 
-Build both images:
-```sh
-docker compose build
-```
+The default `docker-compose.yml` pulls the pre-built image from GHCR — no local build needed.
 
 Create the data directory (must exist before any command):
 ```sh
@@ -33,26 +30,26 @@ docker compose run crypto sign    -i msg.enc
 docker compose run crypto verify  -i msg.enc
 ```
 
-Run tests:
+## Development (build locally)
+
+Use `docker-compose.dev.yml` to build from source instead of pulling from GHCR:
+
 ```sh
-docker compose run test
+docker compose -f docker-compose.dev.yml build
+
+docker compose -f docker-compose.dev.yml run crypto keygen
+docker compose -f docker-compose.dev.yml run test
 ```
 
 ## Running without Docker Compose
 
 ```sh
-docker build --target runtime -t crypto .
-docker build --target test    -t crypto-test .
+docker pull ghcr.io/stephen-steyaert-odu/crytpography-project/cryptography-course-project:latest
 
 mkdir -p data   # must exist before mounting
 
-docker run --rm -v "$(pwd)/data":/data -w /data crypto keygen
-docker run --rm -v "$(pwd)/data":/data -w /data crypto encrypt -i plaintext.txt -o msg.enc
-docker run --rm -v "$(pwd)/data":/data -w /data crypto decrypt -i msg.enc -o plaintext.txt
-docker run --rm -v "$(pwd)/data":/data -w /data crypto sign    -i msg.enc
-docker run --rm -v "$(pwd)/data":/data -w /data crypto verify  -i msg.enc
-
-docker run --rm crypto-test
+docker run --rm -v "$(pwd)/data":/data -w /data \
+  ghcr.io/stephen-steyaert-odu/crytpography-project/cryptography-course-project:latest keygen
 ```
 
 ## CLI reference
