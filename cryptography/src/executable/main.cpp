@@ -135,6 +135,15 @@ static int cmd_sign(const std::string& priv_path,
 }
 
 static int cmd_clean() {
+    // Safety check: refuse to run inside a .github directory.
+    auto cwd = std::filesystem::current_path();
+    for (auto p = cwd; p != p.parent_path(); p = p.parent_path()) {
+        if (p.filename() == ".github") {
+            std::cerr << "clean: refusing to run inside a .github directory\n";
+            return 1;
+        }
+    }
+
     // Remove all files created by this program.
     static const std::initializer_list<std::string> exts = {".enc", ".dec", ".sig", ".priv", ".pub"};
     for (const auto& entry : std::filesystem::directory_iterator(".")) {
