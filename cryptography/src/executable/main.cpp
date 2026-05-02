@@ -134,6 +134,19 @@ static int cmd_sign(const std::string& priv_path,
     return 0;
 }
 
+static int cmd_clean() {
+    // Remove all files created by this program.
+    static const std::initializer_list<std::string> exts = {".enc", ".dec", ".sig", ".priv", ".pub"};
+    for (const auto& entry : std::filesystem::directory_iterator(".")) {
+        if (!entry.is_regular_file()) continue;
+        auto ext = entry.path().extension().string();
+        for (const auto& e : exts) {
+            if (ext == e) { std::filesystem::remove(entry.path()); break; }
+        }
+    }
+    return 0;
+}
+
 static int cmd_verify(const std::string& pub_path,
                       const std::string& in_path,
                       const std::string& sig_path) {
@@ -179,7 +192,9 @@ static void usage(const char* prog) {
         "  verify\n"
         "    -K, --pub  <file>    public key           (default: key.pub)\n"
         "    -i, --in   <file>    message input        (default: stdin)\n"
-        "    -s, --sig  <file>    signature file       (default: msg.sig)\n";
+        "    -s, --sig  <file>    signature file       (default: msg.sig)\n"
+        "\n"
+        "  clean                  remove all .enc .dec .sig files in the current directory\n";
 }
 
 // ── main ──────────────────────────────────────────────────────────────────────
@@ -227,6 +242,7 @@ int main(int argc, char* argv[]) {
         else if (cmd == "sign")    return cmd_sign(priv_path, in_path,
                                        out_path == "-" ? sig_path : out_path);
         else if (cmd == "verify")  return cmd_verify(pub_path, in_path, sig_path);
+        else if (cmd == "clean")   return cmd_clean();
         else {
             std::cerr << "unknown command: " << cmd << "\n";
             usage(argv[0]);
