@@ -1,16 +1,40 @@
+# Open Sourced:
+
+[Linked here](https://github.com/Stephen-Steyaert-ODU/Crytpography-Project)
+
 # ECIES + ECDSA over P-256
 
-Implements ECIES (Elliptic Curve Integrated Encryption Scheme) and ECDSA from scratch in C++20 over the NIST P-256 curve. All elliptic curve arithmetic is hand-rolled; GMP provides big integer primitives and OpenSSL provides AES-256-GCM and HMAC-SHA256.
+Implements ECIES (Elliptic Curve Integrated Encryption Scheme) and ECDSA from scratch in C++20 over the NIST P-256 curve. All elliptic curve arithmetic is hand-rolled on top of GMP's big integer primitives. OpenSSL is used only for AES-256-GCM and HMAC-SHA256, consistent with standard practice of not reimplementing well-audited symmetric primitives.
 
-## Programs
+## Features and design
 
-| Command   | Description |
-|-----------|-------------|
-| `keygen`  | Generate a P-256 keypair and write to files |
-| `encrypt` | ECIES encrypt: ECDH → HKDF → AES-256-GCM |
-| `decrypt` | ECIES decrypt and authenticate |
-| `sign`    | ECDSA sign a file with a private key |
-| `verify`  | ECDSA verify a file against a public key and signature |
+- **Hand-rolled EC arithmetic** — prime field elements (`FieldElement`), affine and Jacobian projective point representations, point addition and doubling with the `dbl-2001-b` / `add-2007-bl` formulas (optimised for P-256's a = −3 coefficient), and scalar multiplication via the Montgomery ladder for side-channel resistance
+- **Full ECIES pipeline** — ephemeral ECDH key exchange → HKDF-SHA256 key derivation → AES-256-GCM authenticated encryption, with the output format `ephemeral_pub (65 B) || GCM tag (16 B) || ciphertext`
+- **ECDSA** — sign and verify with hand-rolled modular arithmetic; SHA-256 via OpenSSL
+- **Single binary, five subcommands** — `keygen`, `encrypt`, `decrypt`, `sign`, `verify`, `clean`; all flags optional with sensible defaults, supports both short (`-i`) and long (`--in`) forms
+- **Docker-first** — runs on any platform with Docker; no native toolchain required; CI via GitHub Actions builds, tests, and publishes to GHCR
+
+## Dependencies
+
+An `install.sh` script is included to install dependencies automatically:
+
+```sh
+# Install Docker (recommended — default)
+./install.sh
+
+# Or install native build tools (CMake, GMP, OpenSSL, etc.)
+./install.sh --native
+```
+
+The script detects macOS, Debian/Ubuntu, Alpine, and WSL automatically.
+
+**Windows**: the script does not run natively on Windows. Use one of:
+- **WSL** (recommended) — open a WSL terminal and run `./install.sh` as normal
+- **winget** — `winget install Docker.DockerDesktop`
+- **Chocolatey** — `choco install docker-desktop`
+
+- **Docker install**: on macOS it prints the Homebrew/Docker Desktop instructions; on Linux it runs the official Docker install script
+- **Native install**: installs CMake, Ninja, GCC, GMP, and OpenSSL via the system package manager; Catch2 is fetched automatically by CMake at configure time via `FetchContent`
 
 ## Running with Docker Compose (recommended)
 
@@ -28,6 +52,7 @@ docker compose run crypto encrypt -i plaintext.txt -o msg.enc
 docker compose run crypto decrypt -i msg.enc -o plaintext.txt
 docker compose run crypto sign    -i msg.enc
 docker compose run crypto verify  -i msg.enc
+docker compose run crypto clean
 ```
 
 ## Development (build locally)
@@ -81,6 +106,8 @@ Commands:
     -K, --pub  <file>    public key           (default: key.pub)
     -i, --in   <file>    message input        (default: stdin)
     -s, --sig  <file>    signature file       (default: msg.sig)
+
+  clean                  remove all .enc .dec .sig .priv .pub files in the current directory
 ```
 
 ## Key file format
@@ -97,4 +124,4 @@ Commands:
 |---------|------|
 | [GMP](https://gmplib.org/) | Big integer arithmetic underlying all field operations |
 | [OpenSSL](https://www.openssl.org/) | AES-256-GCM and HMAC-SHA256 only |
-| [Catch2](https://github.com/catchorg/Catch2) | Unit testing |
+| [Catch2](https://github.com/catchorg/Catch2) | Unit testing (fetched automatically by CMake) |
